@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Study France Prototype</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans:wght@400;600&display=swap">
+<style>
+/* Layout: sample landing page and form on the left, a "behind the scenes" panel on the right. Colors match the flow map tiers. */
+:root {
+  --bg: #f7f8f6; --surface: #ffffff; --surface2: #eef1ee; --fg: #14201d; --muted: #52605b;
+  --line: #c9d1cc; --line-strong: #7b8a84; --launch: #0f766e; --convert: #b45309; --full: #1d4ed8;
+  --chip-fg: #ffffff; --danger: #b42318; --ok: #166534; --ok-bg: #e6f4ea; --warn-bg: #fff4e0;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1514; --surface: #151d1b; --surface2: #1c2623; --fg: #e8efec; --muted: #a2b0aa;
+    --line: #31403b; --line-strong: #6d7f78; --launch: #5eead4; --convert: #fbbf24; --full: #93c5fd;
+    --chip-fg: #0b1220; --danger: #fda29b; --ok: #86efac; --ok-bg: #12301f; --warn-bg: #33250d; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1514; --surface: #151d1b; --surface2: #1c2623; --fg: #e8efec; --muted: #a2b0aa;
+  --line: #31403b; --line-strong: #6d7f78; --launch: #5eead4; --convert: #fbbf24; --full: #93c5fd;
+  --chip-fg: #0b1220; --danger: #fda29b; --ok: #86efac; --ok-bg: #12301f; --warn-bg: #33250d; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 16px; line-height: 1.5;
+  padding-block: 0 56px; margin: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.ribbon { background: var(--fg); color: var(--bg); font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em;
+  padding: 8px 16px; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); text-align: center; }
+.bar { max-width: 1180px; margin: 18px auto 0; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; }
+.seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 6px; overflow: hidden; }
+.seg button { font: inherit; font-size: 14px; background: var(--surface); color: var(--fg); border: 0; padding: 8px 14px; cursor: pointer; border-right: 1px solid var(--line); }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
+.seg button:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible, .opt:has(input:focus-visible) { outline: 3px solid var(--launch); outline-offset: 2px; }
+.lbl { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-right: 8px; }
+.grid { max-width: 1180px; margin: 22px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 28px; align-items: start; }
+@media (max-width: 960px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 22px; }
+.stack { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+h1 { font-size: clamp(26px, 4vw, 34px); line-height: 1.15; margin: 4px 0 10px; font-weight: 600; text-wrap: balance; }
+h2 { font-size: 20px; margin: 0 0 6px; font-weight: 600; }
+h3 { font-size: 15px; margin: 0 0 8px; font-weight: 600; }
+p { margin: 0 0 10px; } .muted { color: var(--muted); } .small { font-size: 14px; }
+.eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+.vsl { aspect-ratio: 16 / 9; max-width: 100%; background: var(--surface2); border: 1px solid var(--line); border-radius: 8px; display: grid; place-items: center; position: relative; margin: 14px 0 6px; }
+.vsl .play { width: 64px; height: 64px; border-radius: 50%; background: var(--launch); display: grid; place-items: center; }
+.vsl .play::after { content: ""; border-left: 20px solid var(--chip-fg); border-top: 12px solid transparent; border-bottom: 12px solid transparent; margin-left: 5px; }
+.vsl .tag { position: absolute; left: 12px; bottom: 10px; font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.q { border: 0; padding: 0; margin: 0 0 20px; min-width: 0; }
+.q legend, .q > label.t { font-weight: 600; padding: 0; margin-bottom: 8px; display: block; }
+.req::after { content: " *"; color: var(--danger); }
+.opts { display: grid; gap: 8px; }
+.opts.two { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.opt { display: flex; gap: 10px; align-items: flex-start; border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; cursor: pointer; background: var(--surface); }
+.opt:has(input:checked) { border-color: var(--launch); box-shadow: inset 0 0 0 1px var(--launch); background: var(--surface2); }
+.opt:has(input:disabled) { opacity: 0.55; cursor: not-allowed; }
+.opt input { margin-top: 4px; accent-color: var(--launch); }
+.opt .s { display: block; font-size: 13px; color: var(--muted); }
+input[type=text], input[type=email], input[type=tel], select { width: 100%; font: inherit; padding: 10px 12px; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface); color: var(--fg); }
+.fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px 18px; margin-bottom: 20px; }
+.fields .q { margin: 0; }
+.btn { font: inherit; font-weight: 600; padding: 11px 18px; border-radius: 6px; border: 1px solid var(--launch); background: var(--launch); color: var(--chip-fg); cursor: pointer; }
+.btn.alt { background: transparent; color: var(--fg); border-color: var(--line-strong); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.chip { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 3px; color: var(--chip-fg); display: inline-block; }
+.chip.l { background: var(--launch); } .chip.c { background: var(--convert); } .chip.f { background: var(--full); }
+.err { color: var(--danger); font-size: 14px; margin: 0 0 14px; }
+.note { background: var(--warn-bg); border-radius: 6px; padding: 10px 12px; font-size: 14px; }
+.okbox { background: var(--ok-bg); border-radius: 6px; padding: 12px 14px; }
+.sum { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; background: var(--surface2); padding: 10px 12px; border-radius: 6px; margin-bottom: 18px; }
+.slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 12px 0; }
+.wa { background: var(--surface2); border-radius: 8px; padding: 14px; }
+.bubble { background: var(--ok-bg); border-radius: 10px 10px 2px 10px; padding: 10px 12px; max-width: 420px; margin-left: auto; font-size: 15px; white-space: pre-wrap; }
+.pay { border: 1px dashed var(--line-strong); border-radius: 8px; padding: 16px; }
+.side { position: sticky; top: 16px; display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+@media (max-width: 960px) { .side { position: static; } }
+.kv { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 4px 10px; font-size: 13px; margin: 0; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; overflow-wrap: anywhere; }
+.log { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: 12px; display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow: auto; }
+.log li { overflow-wrap: anywhere; }
+.log .f { color: var(--full); } .log .c { color: var(--convert); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+.scroll { overflow-x: auto; }
+.callouts { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.callouts li { border-left: 3px solid var(--convert); padding: 6px 12px; background: var(--surface2); border-radius: 0 6px 6px 0; }
+</style>
+
+
+</head>
+<body>
+<div class="ribbon">PROTOTYPE · SAMPLE DATA · NOTHING YOU TYPE IS SENT OR SAVED</div>
+<div class="bar">
+  <div class="seg" role="group" aria-label="Which system to show">
+    <button type="button" data-action="tab" data-v="proposed" aria-pressed="true">Proposed</button>
+    <button type="button" data-action="tab" data-v="today" aria-pressed="false">Today</button>
+  </div>
+  <div id="tierBar"><span class="lbl">Show as</span>
+    <span class="seg" role="group" aria-label="Which tier to show">
+      <button type="button" data-action="tier" data-v="launch">Launch</button>
+      <button type="button" data-action="tier" data-v="convert">Convert</button>
+      <button type="button" data-action="tier" data-v="full" aria-pressed="true">Full growth</button>
+    </span>
+  </div>
+</div>
+<div class="grid">
+  <main id="main" class="stack" aria-live="polite"></main>
+  <aside id="side" class="side" aria-label="Behind the scenes"></aside>
+</div>
+
+<script>
+(function () {
+  var BRAND = "Sample Study Advisors";
+  var HEARD = ["Website", "Flier", "Instagram", "X (Twitter)", "YouTube", "TikTok", "LinkedIn", "Brand Ambassador (Divine)", "Facebook", "Dr Bashar Gulumbe's Facebook page", "Family or friends"];
+  var INTAKES = [
+    { v: "March intake", s: "Closed", off: true },
+    { v: "May to July intake", s: "Extremely limited options" },
+    { v: "September/October intake", s: "Application is open" },
+    { v: "January 2027 intake", s: "Opening mid-July" },
+    { v: "September 2027 intake", s: "Opening in October 2026" },
+    { v: "None of the above (other destinations)", s: "" }
+  ];
+  var AGES = [
+    { v: "u18", t: "Below 18 years" }, { v: "18-24", t: "18 to 24 years" }, { v: "25-34", t: "25 to 34 years" },
+    { v: "35-39", t: "35 to 39 years" }, { v: "40-45", t: "40 to 45 years" }, { v: "45+", t: "45 years and above" }
+  ];
+  var NEEDS = [
+    { v: "study", t: "Study in France", s: "Admission and visa, private or public university" },
+    { v: "phd", t: "PhD or doctorate", s: "Starts with an eligibility check" },
+    { v: "visa", t: "Visa help only", s: "You already have an admission" },
+    { v: "housing", t: "Housing or arrival help", s: "Accommodation, inspection, airport pick-up" },
+    { v: "unsure", t: "Not sure yet, talk to an advisor first", s: "Consultation only" },
+    { v: "spain", t: "Spain instead (Bachelor and Master's)", s: "An advisor will share the options" }
+  ];
+  var PLANS = {
+    standard: { n: "Standard: consultation only", p: "₦100,000" },
+    reassess: { n: "Visa re-application assessment and evaluation only", p: "₦100,000" },
+    reapp: { n: "Visa re-application service only", p: "₦400,000 or 400 euros" },
+    phdcheck: { n: "PhD pre-engagement eligibility check (consultation session)", p: "₦100,000" },
+    bronze: { n: "Bronze: admission + visa application (private schools)", p: "₦550,000" },
+    pubadm: { n: "Public school admission only", p: "₦500,000" },
+    silver: { n: "Silver: public school admission + visa application", p: "₦750,000" },
+    premium: { n: "Premium: all of the above except visa re-application and PhD", p: "850 euros or ₦1.2M" },
+    visa: { n: "Visa application support only", p: "₦350,000" },
+    acc: { n: "Accommodation support only (complete plan)", p: "250 euros" },
+    inspect: { n: "Accommodation inspection only", p: "150 euros (Paris) or 100 euros (other cities)" },
+    pickup: { n: "Pick-up and arrival service, with African meal (Montpellier only)", p: "100 to 250 euros" },
+    spain: { n: "Spain option (Bachelor and Master's only)", p: "" }
+  };
+  var SLOTS = ["Mon, 10:00", "Mon, 14:00", "Tue, 11:00", "Wed, 09:30", "Wed, 16:00", "Thu, 12:00"];
+  var ROUTE_NAME = { A: "Paid services", B: "Plan packages", C: "Support-only", D: "Not a fit" };
+
+  var state;
+  function fresh(tab, tier) {
+    return { tab: tab || "proposed", tier: tier || "full", screen: "landing", s1: {}, f: {}, route: null, errors: [], events: [], lead: null, endStep: null, slot: null, meet: "Zoom", paid: false, wa: false };
+  }
+  state = fresh();
+  var clock = 0;
+  function track(name, params, tier) {
+    clock += 2 + Math.floor(Math.random() * 5);
+    state.events.push({ t: clock, name: name, params: params || "", tier: tier || "l" });
+  }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function chip(t) { return t === "launch" ? '<span class="chip l">LAUNCH</span>' : t === "convert" ? '<span class="chip c">CONVERT</span>' : '<span class="chip f">FULL GROWTH</span>'; }
+  function tierRank() { return { launch: 1, convert: 2, full: 3 }[state.tier]; }
+
+  function routeOf(s) {
+    if (s.age === "u18") return "D";
+    if (s.denied === "yes") return "A";
+    return { study: "B", phd: "A", visa: "C", housing: "C", unsure: "A", spain: "C" }[s.need];
+  }
+  function plansFor(route, s) {
+    if (route === "A") {
+      if (s.denied === "yes") return ["reassess", "reapp"];
+      if (s.need === "phd") return ["phdcheck"];
+      return ["standard"];
+    }
+    if (route === "B") return ["bronze", "pubadm", "silver", "premium"];
+    if (s.need === "visa") return ["visa"];
+    if (s.need === "housing") return ["acc", "inspect", "pickup"];
+    return ["spain"];
+  }
+  function label(list, v, key) { for (var i = 0; i < list.length; i++) if (list[i].v === v) return list[i][key || "t"]; return v || ""; }
+
+  /* ---------- views ---------- */
+  function radio(name, field, v, text, sub, checked, off) {
+    return '<label class="opt"><input type="radio" name="' + name + '" data-field="' + field + '" value="' + esc(v) + '"' + (checked ? " checked" : "") + (off ? " disabled" : "") + '><span>' + esc(text) + (sub ? '<span class="s">' + esc(sub) + "</span>" : "") + "</span></label>";
+  }
+  function landing() {
+    var s = state.s1, h = "";
+    h += '<section class="card"><div class="eyebrow">' + esc(BRAND) + ' · France</div><h1>Find your route to France in two short steps</h1>';
+    h += '<p class="muted">Watch the 90-second video, answer three quick questions, and we send you to the right form.</p>';
+    h += '<div class="vsl" role="img" aria-label="Placeholder for a 90-second explainer video"><div class="play"></div><span class="tag">Video placeholder · 90 seconds</span></div>';
+    h += '<p class="small muted">The video explains how the process works and who each plan suits. Your own recording goes here.</p></section>';
+    h += '<section class="card"><div class="row" style="justify-content:space-between"><h2>Step 1 of 2 · Quick check</h2>' + chip("launch") + "</div>";
+    h += '<p class="small muted">Three questions. Then you see only the questions that apply to you.</p>';
+    h += '<fieldset class="q"><legend class="req">What do you need help with?</legend><div class="opts">';
+    NEEDS.forEach(function (n) { h += radio("need", "s1.need", n.v, n.t, n.s, s.need === n.v); });
+    h += '</div></fieldset><fieldset class="q"><legend class="req">Age range</legend><div class="opts two">';
+    AGES.forEach(function (a) { h += radio("age", "s1.age", a.v, a.t, "", s.age === a.v); });
+    h += '</div></fieldset><fieldset class="q"><legend class="req">Have you been denied a visa by a Schengen country before? (visit, study or work)</legend><div class="opts two">';
+    h += radio("denied", "s1.denied", "no", "No", "", s.denied === "no") + radio("denied", "s1.denied", "yes", "Yes", "We will point you to the re-application route", s.denied === "yes");
+    h += '</div></fieldset><div class="row"><button class="btn" type="button" data-action="step1" id="s1btn"' + (s.need && s.age && s.denied ? "" : " disabled") + '>Continue</button><span class="small muted">Takes under a minute</span></div></section>';
+    return h;
+  }
+  function field(id, labelText, type, extra) {
+    var v = state.f[id] || "";
+    return '<div class="q"><label class="t req" for="' + id + '">' + labelText + '</label><input id="' + id + '" type="' + type + '" data-field="f.' + id + '" value="' + esc(v) + '" ' + (extra || "") + "></div>";
+  }
+  function step2() {
+    var r = state.route, s = state.s1, f = state.f, h = "";
+    var summary = '<div class="sum"><span><b>Route:</b> ' + ROUTE_NAME[r] + "</span><span><b>Need:</b> " + esc(label(NEEDS, s.need)) + "</span><span><b>Age:</b> " + esc(label(AGES, s.age)) + "</span><span><b>Visa denial:</b> " + (s.denied === "yes" ? "Yes" : "No") + '</span><a href="#" data-action="back">Change</a></div>';
+    h += '<section class="card"><div class="row" style="justify-content:space-between"><h2>Step 2 of 2 · Your details</h2>' + chip("launch") + "</div>" + summary;
+    if (s.denied === "yes") h += '<p class="note">Because you were refused a visa before, the re-application options are shown below.</p><br>';
+    if (state.errors.length) h += '<p class="err" role="alert">' + esc(state.errors.join(" ")) + "</p>";
+    h += '<div class="fields">' + field("email", "Email", "email", 'autocomplete="email"') + field("name", "Name (first name and surname)", "text", 'autocomplete="name"') +
+      field("country", "Where are you contacting us from? (country)", "text", 'placeholder="e.g. Mozambique"') + field("phone", "Phone number (we call only if we need clarification)", "tel", 'autocomplete="tel"') + "</div>";
+    h += '<div class="q"><label class="t req" for="heard">How did you hear about us?</label><select id="heard" data-field="f.heard"><option value="">Choose one</option>';
+    HEARD.forEach(function (x) { h += '<option' + (f.heard === x ? " selected" : "") + ">" + esc(x) + "</option>"; });
+    h += "</select></div>";
+    h += '<fieldset class="q"><legend class="req">Which intake?</legend><div class="opts two">';
+    INTAKES.forEach(function (i) { h += radio("intake", "f.intake", i.v, i.v, i.s, f.intake === i.v, i.off); });
+    h += '</div></fieldset><fieldset class="q"><legend class="req">' + (r === "B" ? "Choose your plan" : r === "A" ? "Your service" : "Your service") + "</legend>";
+    if (r === "B") h += '<p class="small muted">Bronze is for private schools (Management and IT programmes only). Silver is for public schools (Sciences, Management, IT and more).</p>';
+    h += '<div class="opts">';
+    var list = plansFor(r, s);
+    if (list.length === 1 && !f.plan) f.plan = list[0];
+    if (r === "A" && !f.plan) f.plan = list[0];
+    list.forEach(function (k) { h += radio("plan", "f.plan", k, PLANS[k].n, PLANS[k].p, f.plan === k); });
+    h += '</div></fieldset><fieldset class="q"><legend class="req">Are you willing to proceed and be contacted by a Student Advisor?</legend><div class="opts two">' +
+      radio("consent", "f.consent", "yes", "Yes", "", f.consent === "yes") + radio("consent", "f.consent", "no", "No", "", f.consent === "no") + "</div></fieldset>";
+    h += '<div class="row"><button class="btn" type="button" data-action="submit">Submit</button><button class="btn alt" type="button" data-action="back">Back</button></div></section>';
+    return h;
+  }
+  function onboardingPreview() {
+    if (state.tier !== "full") return "";
+    return '<section class="card"><div class="row" style="justify-content:space-between"><h3>After your call: onboarding</h3>' + chip("full") + '</div><p class="small muted" style="margin:0 0 8px">Sent once you decide to proceed.</p><ul class="small" style="margin:0;padding-left:20px"><li>Passport data page and signature upload, with file type and size guidance</li><li>Only the agreement for your chosen plan</li><li>Proof of payment, with a short note on how your files are stored and used</li></ul></section>';
+  }
+  function thanks(msg) {
+    return '<section class="card"><div class="okbox"><h2>Thank you, ' + esc(state.f.name) + "</h2><p style=\"margin:0\">" + msg + "</p></div></section>";
+  }
+  function endView() {
+    var r = state.route, t = state.tier, f = state.f, plan = PLANS[f.plan] || {};
+    if (r === "D") return '<section class="card"><h2>Thanks for your interest</h2><p>Our current packages are for applicants aged 18 and above. Please come back when you are eligible, or follow us for updates.</p><button class="btn alt" type="button" data-action="reset">Start over</button></section>';
+    if (f.consent === "no") return thanks("You chose not to be contacted, so no advisor will reach out. Your answers were not shared. Come back any time.") + '<button class="btn alt" type="button" data-action="reset">Start over</button>';
+    if (r === "C") {
+      var msg = "Hello, I'm " + f.name + " from " + f.country + ". I'm interested in: " + plan.n + ".\nIntake: " + f.intake + ". Age range: " + label(AGES, state.s1.age) + ".";
+      return '<section class="card"><div class="row" style="justify-content:space-between"><h2>Chat with an advisor on WhatsApp</h2>' + chip("launch") + '</div><p class="muted">Your message is ready. One tap and it opens in WhatsApp.</p><div class="wa"><div class="bubble">' + esc(msg) + '</div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" data-action="wa">' + (state.wa ? "Opened (sample)" : "Open WhatsApp") + '</button><span class="small muted">Sample only: the live version opens the advisor\'s number.</span></div></section>' + onboardingPreview();
+    }
+    if (t === "launch") return thanks("An advisor received your details and will contact you by email or phone. In the Convert tier this is where you pick a time or pay online.") + '<div class="note">You are viewing the Launch tier: the advisor is alerted and follows up by hand.</div>';
+    if (!state.endStep) state.endStep = r === "A" ? "pay" : "slot";
+    if (state.endStep === "pay") {
+      return '<section class="card"><div class="row" style="justify-content:space-between"><h2>Pay to confirm your session</h2>' + chip("convert") + '</div><div class="pay"><p style="margin:0 0 4px"><b>' + esc(plan.n) + '</b></p><p class="muted" style="margin:0 0 12px">' + esc(plan.p) + '</p><p class="small muted" style="margin:0 0 12px">The Paystack checkout opens here in the live version. This is a stand-in, nothing is charged.</p><button class="btn" type="button" data-action="pay">Simulate payment</button></div></section>';
+    }
+    if (state.endStep === "slot") {
+      var h = '<section class="card"><div class="row" style="justify-content:space-between"><h2>' + (r === "A" ? "Payment received. Choose a time" : "Book your call") + "</h2>" + chip("convert") + "</div>";
+      h += '<p class="muted">' + (r === "A" ? "Pick a slot for your session." : "Pick a slot with a Student Advisor. Fees are discussed on the call.") + "</p>";
+      h += '<div class="row"><span class="lbl">Meeting on</span><span class="seg"><button type="button" data-action="meet" data-v="Zoom" aria-pressed="' + (state.meet === "Zoom") + '">Zoom</button><button type="button" data-action="meet" data-v="Google Meet" aria-pressed="' + (state.meet === "Google Meet") + '">Google Meet</button></span></div><div class="slots">';
+      SLOTS.forEach(function (x) { h += '<label class="opt">' + '<input type="radio" name="slot" data-field="slot" value="' + x + '"' + (state.slot === x ? " checked" : "") + "><span>" + x + "</span></label>"; });
+      h += '</div><p class="small muted">Sample availability. The live version reads your real calendar.</p><button class="btn" type="button" data-action="book">Confirm booking</button></section>';
+      return h;
+    }
+    return '<section class="card"><div class="okbox"><h2>You are booked</h2><p style="margin:0">' + esc(state.slot) + " on " + esc(state.meet) + ". A calendar invite and reminders go to " + esc(f.email) + ".</p></div></section>" +
+      '<section class="card"><h3>What happens next</h3><p class="small muted" style="margin:0">Reminders go out before the call. If you do not show up, you get a link to rebook.</p></section>' + onboardingPreview();
+  }
+  function today() {
+    var h = '<section class="card"><div class="eyebrow">Current form structure</div><h1>Today: one long form for everyone</h1><p class="muted">Rebuilt from the live Bronze form text so the two can be compared side by side. Nothing here is interactive.</p>';
+    h += '<div class="scroll"><table><thead><tr><th>Question</th><th>Choices</th></tr></thead><tbody>';
+    [["Email", "free text"], ["Where are you contacting from?", "free text"], ["Name", "free text"], ["Phone number", "free text"], ["How did you hear about us?", "11 choices"],
+     ["Denied a Schengen visa before?", "Yes / No"], ["Which intake?", "6 choices, status typed into the choice text"], ["Age range", "6 choices, including “Below 18”"],
+     ["Plan selection", "15 choices in one list, from ₦100,000 to 850 euros"], ["Willing to be contacted by an advisor?", "Yes / No"]].forEach(function (r) {
+      h += "<tr><td>" + esc(r[0]) + "</td><td>" + esc(r[1]) + "</td></tr>";
+    });
+    h += "</tbody></table></div></section>";
+    h += '<section class="card"><h2>What this means for an applicant</h2><ul class="callouts">' +
+      "<li>Everyone sees all 15 plans, including ones that cannot apply to them.</li>" +
+      "<li>The form says applicants under 18 are not included, but they can still submit it.</li>" +
+      "<li>Public school applicants are told to leave the form and go back to the website to pick Silver.</li>" +
+      "<li>Intake status such as “CLOSED” is typed into the answer text, so it goes stale when dates change.</li>" +
+      "<li>The form text shows no booking, no payment and no WhatsApp step.</li></ul></section>";
+    h += '<section class="card"><h2>The same questions, in a different order</h2><p style="margin:0">Every question above is still asked in the proposed flow. Age and visa denial move to Step 1 because they decide the route. The rest stay in Step 2, with plan choices cut down to the ones that apply.</p></section>';
+    return h;
+  }
+  function side() {
+    var h = '<section class="card"><h3>Behind the scenes</h3><p class="small muted" style="margin:0 0 10px">What the advisor and the responses sheet receive.</p>';
+    if (!state.lead) h += '<p class="small muted" style="margin:0">Nothing yet. Complete the form to see the lead record.</p>';
+    else {
+      var l = state.lead;
+      h += '<dl class="kv"><dt>Status</dt><dd>' + esc(l.status) + "</dd><dt>Route</dt><dd>" + esc(l.route) + "</dd><dt>Name</dt><dd>" + esc(l.name) + "</dd><dt>Email</dt><dd>" + esc(l.email) + "</dd><dt>Phone</dt><dd>" + esc(l.phone) + "</dd><dt>Country</dt><dd>" + esc(l.country) + "</dd><dt>Plan</dt><dd>" + esc(l.plan) + "</dd><dt>Intake</dt><dd>" + esc(l.intake) + "</dd><dt>Age</dt><dd>" + esc(l.age) + "</dd><dt>Visa denial</dt><dd>" + esc(l.denied) + "</dd><dt>Heard via</dt><dd>" + esc(l.heard) + "</dd><dt>Link source</dt><dd>instagram (sample)</dd><dt>Advisor alert</dt><dd>sent (sample)</dd></dl>";
+    }
+    h += "</section>";
+    h += '<section class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Tracking events</h3>' + chip("launch") + "</div>";
+    if (!state.events.length) h += '<p class="small muted" style="margin:10px 0 0">Events appear here as you move through the flow.</p>';
+    else {
+      h += '<ul class="log" style="margin-top:10px">';
+      state.events.forEach(function (e) { h += '<li class="' + e.tier + '">+' + e.t + "s  " + esc(e.name) + (e.params ? "  " + esc(e.params) : "") + "</li>"; });
+      h += "</ul>";
+    }
+    h += "</section>";
+    return h;
+  }
+
+  /* ---------- actions ---------- */
+  function setByPath(path, v) {
+    var p = path.split("."), o = state;
+    for (var i = 0; i < p.length - 1; i++) o = o[p[i]];
+    o[p[p.length - 1]] = v;
+  }
+  function updateS1Button() {
+    var b = document.getElementById("s1btn");
+    if (b) b.disabled = !(state.s1.need && state.s1.age && state.s1.denied);
+  }
+  function startFlow() {
+    track("page_view", "/apply");
+    track("video_section_view", "", "l");
+  }
+  function validate() {
+    var f = state.f, e = [];
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email || "")) e.push("Enter a valid email.");
+    if (!(f.name || "").trim()) e.push("Enter your name.");
+    if (!(f.country || "").trim()) e.push("Enter your country.");
+    if (!(f.phone || "").trim()) e.push("Enter a phone number.");
+    if (!f.heard) e.push("Tell us how you heard about us.");
+    if (!f.intake) e.push("Choose an intake.");
+    if (!f.plan) e.push("Choose a service.");
+    if (!f.consent) e.push("Say whether we may contact you.");
+    return e;
+  }
+  function act(a, v) {
+    if (a === "tab") { state.tab = v; render(); return; }
+    if (a === "tier") { state.tier = v; render(); return; }
+    if (a === "reset") { var t = state.tab, ti = state.tier; state = fresh(t, ti); clock = 0; startFlow(); render(); return; }
+    if (a === "back") { state.screen = "landing"; state.errors = []; render(); return; }
+    if (a === "step1") {
+      var s = state.s1;
+      if (!(s.need && s.age && s.denied)) return;
+      state.route = routeOf(s);
+      track("step1_complete", "route=" + state.route + " need=" + s.need);
+      if (state.route === "D") {
+        state.lead = { status: "Not a fit (under 18)", route: ROUTE_NAME.D, name: "-", email: "-", phone: "-", country: "-", plan: "-", intake: "-", age: label(AGES, s.age), denied: s.denied, heard: "-" };
+        track("lead_not_fit", "reason=under_18");
+        state.screen = "end";
+      } else { state.screen = "step2"; track("step2_view", "route=" + state.route); }
+      render(); window.scrollTo(0, 0); return;
+    }
+    if (a === "submit") {
+      state.errors = validate();
+      if (state.errors.length) { render(); window.scrollTo(0, 0); return; }
+      var f = state.f;
+      state.lead = { status: f.consent === "yes" ? "Qualified, wants contact" : "Qualified, no contact", route: ROUTE_NAME[state.route], name: f.name, email: f.email, phone: f.phone, country: f.country, plan: PLANS[f.plan].n, intake: f.intake, age: label(AGES, state.s1.age), denied: state.s1.denied === "yes" ? "Yes" : "No", heard: f.heard };
+      track("step2_submit", "route=" + state.route + " plan=" + f.plan);
+      track("generate_lead", "value_plan=" + f.plan);
+      if (state.tier === "full") { track("meta_pixel Lead", "", "f"); track("conversion_api Lead", "server-side", "f"); }
+      state.screen = "end"; render(); window.scrollTo(0, 0); return;
+    }
+    if (a === "pay") { state.paid = true; state.endStep = "slot"; track("purchase", "paystack " + state.f.plan, "c"); if (state.tier === "full") track("meta_pixel Purchase", "", "f"); render(); return; }
+    if (a === "meet") { state.meet = v; render(); return; }
+    if (a === "book") {
+      if (!state.slot) return;
+      state.endStep = "done"; track("booking_confirmed", state.meet + " " + state.slot, "c"); render(); return;
+    }
+    if (a === "wa") { state.wa = true; track("whatsapp_click", "route=C"); render(); return; }
+  }
+
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-action]");
+    if (!b) return;
+    e.preventDefault();
+    act(b.getAttribute("data-action"), b.getAttribute("data-v"));
+  });
+  document.addEventListener("change", function (e) {
+    var fld = e.target.getAttribute && e.target.getAttribute("data-field");
+    if (!fld) return;
+    if (fld === "slot") { state.slot = e.target.value; return; }
+    setByPath(fld, e.target.value);
+    if (fld.indexOf("s1.") === 0) updateS1Button();
+  });
+  document.addEventListener("input", function (e) {
+    var fld = e.target.getAttribute && e.target.getAttribute("data-field");
+    if (fld && e.target.type !== "radio" && fld !== "slot") setByPath(fld, e.target.value);
+  });
+
+  function render() {
+    var segs = document.querySelectorAll("[data-action=tab]");
+    for (var i = 0; i < segs.length; i++) segs[i].setAttribute("aria-pressed", segs[i].getAttribute("data-v") === state.tab);
+    var tb = document.querySelectorAll("[data-action=tier]");
+    for (var j = 0; j < tb.length; j++) tb[j].setAttribute("aria-pressed", tb[j].getAttribute("data-v") === state.tier);
+    document.getElementById("tierBar").hidden = state.tab !== "proposed";
+    var main = document.getElementById("main");
+    if (state.tab === "today") main.innerHTML = today();
+    else if (state.screen === "landing") main.innerHTML = landing();
+    else if (state.screen === "step2") main.innerHTML = step2();
+    else main.innerHTML = endView() + '<div class="row"><button class="btn alt" type="button" data-action="reset">Start over</button></div>';
+    document.getElementById("side").innerHTML = state.tab === "today" ? "" : side();
+    document.getElementById("side").hidden = state.tab === "today";
+  }
+  startFlow();
+  render();
+})();
+</script>
+</body>
+</html>
