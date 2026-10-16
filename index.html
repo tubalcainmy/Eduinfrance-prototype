@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Eduinfrance Prototype</title>
+<title>Study France Prototype</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +13,7 @@
 :root {
   --bg: #f7f8f6; --surface: #ffffff; --surface2: #eef1ee; --fg: #14201d; --muted: #52605b;
   --line: #c9d1cc; --line-strong: #7b8a84; --launch: #0f766e; --convert: #b45309; --full: #1d4ed8;
-  --chip-fg: #ffffff; --danger: #b42318; --ok: #166534; --ok-bg: #e6f4ea; --warn-bg: #fff4e0;
+  --chip-fg: #ffffff; --danger: #b42318; --ok: #166534; --ok-bg: #e6f4ea; --warn-bg: #fff4e0; --full-bg: #e8eefc;
   --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
 }
@@ -21,29 +21,37 @@
   :root:not([data-theme="light"]) {
     --bg: #0f1514; --surface: #151d1b; --surface2: #1c2623; --fg: #e8efec; --muted: #a2b0aa;
     --line: #31403b; --line-strong: #6d7f78; --launch: #5eead4; --convert: #fbbf24; --full: #93c5fd;
-    --chip-fg: #0b1220; --danger: #fda29b; --ok: #86efac; --ok-bg: #12301f; --warn-bg: #33250d; color-scheme: dark;
+    --chip-fg: #0b1220; --danger: #fda29b; --ok: #86efac; --ok-bg: #12301f; --warn-bg: #33250d; --full-bg: #16233f; color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #0f1514; --surface: #151d1b; --surface2: #1c2623; --fg: #e8efec; --muted: #a2b0aa;
   --line: #31403b; --line-strong: #6d7f78; --launch: #5eead4; --convert: #fbbf24; --full: #93c5fd;
-  --chip-fg: #0b1220; --danger: #fda29b; --ok: #86efac; --ok-bg: #12301f; --warn-bg: #33250d; color-scheme: dark;
+  --chip-fg: #0b1220; --danger: #fda29b; --ok: #86efac; --ok-bg: #12301f; --warn-bg: #33250d; --full-bg: #16233f; color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 16px; line-height: 1.5;
-  padding-block: 0 56px; margin: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  padding-block: 0 96px; margin: 0; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 .ribbon { background: var(--fg); color: var(--bg); font-family: var(--mono); font-size: 12px; letter-spacing: 0.04em;
   padding: 8px 16px; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); text-align: center; }
 .bar { max-width: 1180px; margin: 18px auto 0; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; justify-content: space-between; }
+.bar .grp { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
 .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 6px; overflow: hidden; }
 .seg button { font: inherit; font-size: 14px; background: var(--surface); color: var(--fg); border: 0; padding: 8px 14px; cursor: pointer; border-right: 1px solid var(--line); }
 .seg button:last-child { border-right: 0; }
 .seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); }
-.seg button:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible, .opt:has(input:focus-visible) { outline: 3px solid var(--launch); outline-offset: 2px; }
+.seg button.fg[aria-pressed="true"] { background: var(--full); color: var(--chip-fg); }
+.seg button:focus-visible, .btn:focus-visible, input:focus-visible, select:focus-visible, .opt:has(input:focus-visible), a:focus-visible { outline: 3px solid var(--launch); outline-offset: 2px; }
 .lbl { font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin-right: 8px; }
+.tierinfo { max-width: 1180px; margin: 14px auto 0; border: 1px solid var(--line); border-left-width: 6px; border-radius: 6px; padding: 12px 16px; background: var(--surface); font-size: 14px; }
+.tierinfo.launch { border-left-color: var(--launch); } .tierinfo.convert { border-left-color: var(--convert); }
+.tierinfo.full { border-left-color: var(--full); background: var(--full-bg); }
+.tierinfo b { font-size: 15px; }
 .grid { max-width: 1180px; margin: 22px auto 0; display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 28px; align-items: start; }
 @media (max-width: 960px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+.grid:has(#side[hidden]) { grid-template-columns: minmax(0, 1fr); max-width: 820px; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 22px; }
+.card.fullcard { border-color: var(--full); border-width: 2px; }
 .stack { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
 h1 { font-size: clamp(26px, 4vw, 34px); line-height: 1.15; margin: 4px 0 10px; font-weight: 600; text-wrap: balance; }
 h2 { font-size: 20px; margin: 0 0 6px; font-weight: 600; }
@@ -69,6 +77,7 @@ input[type=text], input[type=email], input[type=tel], select { width: 100%; font
 .fields .q { margin: 0; }
 .btn { font: inherit; font-weight: 600; padding: 11px 18px; border-radius: 6px; border: 1px solid var(--launch); background: var(--launch); color: var(--chip-fg); cursor: pointer; }
 .btn.alt { background: transparent; color: var(--fg); border-color: var(--line-strong); }
+.btn.fullbtn { background: var(--full); border-color: var(--full); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
 .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .chip { font-family: var(--mono); font-size: 11px; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 3px; color: var(--chip-fg); display: inline-block; }
@@ -77,6 +86,7 @@ input[type=text], input[type=email], input[type=tel], select { width: 100%; font
 .note { background: var(--warn-bg); border-radius: 6px; padding: 10px 12px; font-size: 14px; }
 .okbox { background: var(--ok-bg); border-radius: 6px; padding: 12px 14px; }
 .sum { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 14px; background: var(--surface2); padding: 10px 12px; border-radius: 6px; margin-bottom: 18px; }
+.sum a { color: var(--full); }
 .slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin: 12px 0; }
 .wa { background: var(--surface2); border-radius: 8px; padding: 14px; }
 .bubble { background: var(--ok-bg); border-radius: 10px 10px 2px 10px; padding: 10px 12px; max-width: 420px; margin-left: auto; font-size: 15px; white-space: pre-wrap; }
@@ -87,12 +97,22 @@ input[type=text], input[type=email], input[type=tel], select { width: 100%; font
 .kv dt { color: var(--muted); } .kv dd { margin: 0; overflow-wrap: anywhere; }
 .log { list-style: none; margin: 0; padding: 0; font-family: var(--mono); font-size: 12px; display: flex; flex-direction: column; gap: 6px; max-height: 280px; overflow: auto; }
 .log li { overflow-wrap: anywhere; }
-.log .f { color: var(--full); } .log .c { color: var(--convert); }
+.log .f { color: var(--full); } .log .c { color: var(--convert); } .log .x { color: var(--muted); }
 table { width: 100%; border-collapse: collapse; font-size: 14px; }
 th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
 .scroll { overflow-x: auto; }
 .callouts { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
 .callouts li { border-left: 3px solid var(--convert); padding: 6px 12px; background: var(--surface2); border-radius: 0 6px 6px 0; }
+.why { border-left: 4px solid var(--launch); background: var(--surface2); padding: 10px 14px; border-radius: 0 6px 6px 0; font-size: 14px; margin: 0; }
+.why.convert { border-left-color: var(--convert); } .why.full { border-left-color: var(--full); background: var(--full-bg); }
+.why .h { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin-bottom: 4px; font-weight: 600; }
+.why p { margin: 0 0 4px; } .why p:last-child { margin: 0; }
+.cookie { position: fixed; left: 0; right: 0; bottom: 0; background: var(--surface); border-top: 3px solid var(--full); padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; justify-content: center; font-size: 14px; z-index: 5; }
+.cookie p { margin: 0; max-width: 640px; }
+.plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; }
+.box { border: 1px solid var(--line); border-radius: 6px; padding: 14px; background: var(--surface); }
+.lead { font-size: 17px; color: var(--muted); }
+.file { border: 1px dashed var(--line-strong); border-radius: 6px; padding: 10px 12px; font-size: 14px; }
 </style>
 
 
@@ -100,26 +120,34 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
 <body>
 <div class="ribbon">PROTOTYPE · SAMPLE DATA · NOTHING YOU TYPE IS SENT OR SAVED</div>
 <div class="bar">
-  <div class="seg" role="group" aria-label="Which system to show">
-    <button type="button" data-action="tab" data-v="proposed" aria-pressed="true">Proposed</button>
-    <button type="button" data-action="tab" data-v="today" aria-pressed="false">Today</button>
+  <div class="grp">
+    <div class="seg" role="group" aria-label="Which view to show">
+      <button type="button" data-action="tab" data-v="proposed" aria-pressed="true">Proposed</button>
+      <button type="button" data-action="tab" data-v="plan" id="planTab" class="fg" aria-pressed="false">Plan page</button>
+      <button type="button" data-action="tab" data-v="today" aria-pressed="false">Today</button>
+    </div>
+    <div class="seg" role="group" aria-label="Explanations">
+      <button type="button" data-action="why" id="whyBtn" aria-pressed="true">Why each step: on</button>
+    </div>
   </div>
   <div id="tierBar"><span class="lbl">Show as</span>
-    <span class="seg" role="group" aria-label="Which tier to show">
-      <button type="button" data-action="tier" data-v="launch">Launch</button>
-      <button type="button" data-action="tier" data-v="convert">Convert</button>
-      <button type="button" data-action="tier" data-v="full" aria-pressed="true">Full growth</button>
+    <span class="seg" role="group" aria-label="Which package to show">
+      <button type="button" data-action="tier" data-v="launch" aria-pressed="false">Launch</button>
+      <button type="button" data-action="tier" data-v="convert" aria-pressed="false">Convert</button>
+      <button type="button" data-action="tier" data-v="full" class="fg" aria-pressed="true">Full growth</button>
     </span>
   </div>
 </div>
+<div id="tierInfo"></div>
 <div class="grid">
   <main id="main" class="stack" aria-live="polite"></main>
   <aside id="side" class="side" aria-label="Behind the scenes"></aside>
 </div>
+<div id="cookie"></div>
 
 <script>
 (function () {
-  var BRAND = "Eduinfrance prototype";
+  var BRAND = "Sample Study Advisors";
   var HEARD = ["Website", "Flier", "Instagram", "X (Twitter)", "YouTube", "TikTok", "LinkedIn", "Brand Ambassador (Divine)", "Facebook", "Dr Bashar Gulumbe's Facebook page", "Family or friends"];
   var INTAKES = [
     { v: "March intake", s: "Closed", off: true },
@@ -158,10 +186,19 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
   };
   var SLOTS = ["Mon, 10:00", "Mon, 14:00", "Tue, 11:00", "Wed, 09:30", "Wed, 16:00", "Thu, 12:00"];
   var ROUTE_NAME = { A: "Paid services", B: "Plan packages", C: "Support-only", D: "Not a fit" };
+  var TIER_INFO = {
+    launch: ["Launch", "launch", "The guided page, both form steps, routing, advisor alert, WhatsApp ending and funnel tracking. After Step 2, an advisor follows up by hand."],
+    convert: ["Convert", "convert", "Everything in Launch, plus Zoom or Google Meet booking, Paystack payment and follow-up for booked calls."],
+    full: ["Full growth", "full", "Everything in Convert, plus the rebuilt onboarding page, rebuilt plan pages and site, SEO foundation, tracking on every page, Meta Pixel and Conversion API, and a cookie consent banner. Look for the blue labels: the <b>Plan page</b> tab, the cookie banner and the onboarding preview."]
+  };
+  var PLANPAGES = {
+    bronze: { name: "Bronze plan", who: "Private universities (Management and IT programmes). HND accepted.", incl: ["Application fee waiver", "Study commitment assessment", "Interview coaching", "Detailed application information", "Visa application guidance"], plan: "bronze", ages: "Bachelor's up to 25, Master's up to 35" },
+    silver: { name: "Silver plan", who: "Public universities (Sciences, Management, IT and more).", incl: ["School search across three tuition categories", "Detailed application information", "Interview coaching", "Visa application guidance and interview preparation"], plan: "silver", ages: "Bachelor's up to 25, Master's up to 32" }
+  };
 
   var state;
-  function fresh(tab, tier) {
-    return { tab: tab || "proposed", tier: tier || "full", screen: "landing", s1: {}, f: {}, route: null, errors: [], events: [], lead: null, endStep: null, slot: null, meet: "Zoom", paid: false, wa: false };
+  function fresh(tab, tier, why, cc) {
+    return { tab: tab || "proposed", tier: tier || "full", why: why !== false, cc: cc || null, screen: "landing", s1: {}, f: {}, route: null, errors: [], events: [], lead: null, endStep: null, slot: null, meet: "Zoom", wa: false, planpage: "bronze", ob: {} };
   }
   state = fresh();
   var clock = 0;
@@ -171,7 +208,15 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
   }
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
   function chip(t) { return t === "launch" ? '<span class="chip l">LAUNCH</span>' : t === "convert" ? '<span class="chip c">CONVERT</span>' : '<span class="chip f">FULL GROWTH</span>'; }
-  function tierRank() { return { launch: 1, convert: 2, full: 3 }[state.tier]; }
+  function label(list, v, key) { for (var i = 0; i < list.length; i++) if (list[i].v === v) return list[i][key || "t"]; return v || ""; }
+  function getBy(path) { var p = path.split("."), o = state; for (var i = 0; i < p.length; i++) { if (o == null) return ""; o = o[p[i]]; } return o == null ? "" : o; }
+  function setBy(path, v) { var p = path.split("."), o = state; for (var i = 0; i < p.length - 1; i++) o = o[p[i]]; o[p[p.length - 1]] = v; }
+
+  /* ---------- explanation block ---------- */
+  function why(tier, title, whyText, problem) {
+    if (!state.why) return "";
+    return '<aside class="why ' + (tier === "full" ? "full" : tier === "convert" ? "convert" : "") + '"><div class="h">' + chip(tier) + "<span>Why this step exists: " + esc(title) + "</span></div><p>" + whyText + "</p><p><b>Problem it removes:</b> " + problem + "</p></aside>";
+  }
 
   function routeOf(s) {
     if (s.age === "u18") return "D";
@@ -189,88 +234,123 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
     if (s.need === "housing") return ["acc", "inspect", "pickup"];
     return ["spain"];
   }
-  function label(list, v, key) { for (var i = 0; i < list.length; i++) if (list[i].v === v) return list[i][key || "t"]; return v || ""; }
 
   /* ---------- views ---------- */
   function radio(name, field, v, text, sub, checked, off) {
     return '<label class="opt"><input type="radio" name="' + name + '" data-field="' + field + '" value="' + esc(v) + '"' + (checked ? " checked" : "") + (off ? " disabled" : "") + '><span>' + esc(text) + (sub ? '<span class="s">' + esc(sub) + "</span>" : "") + "</span></label>";
   }
+  function field(path, id, labelText, type, extra) {
+    return '<div class="q"><label class="t req" for="' + id + '">' + labelText + '</label><input id="' + id + '" type="' + type + '" data-field="' + path + '" value="' + esc(getBy(path)) + '" ' + (extra || "") + "></div>";
+  }
   function landing() {
     var s = state.s1, h = "";
     h += '<section class="card"><div class="eyebrow">' + esc(BRAND) + ' · France</div><h1>Find your route to France in two short steps</h1>';
-    h += '<p class="muted">Watch the 90-second video, answer three quick questions, and we send you to the right form.</p>';
-    h += '<div class="vsl" role="img" aria-label="Placeholder for a 90-second explainer video"><div class="play"></div><span class="tag">Video placeholder · 90 seconds</span></div>';
-    h += '<p class="small muted">The video explains how the process works and who each plan suits. Your own recording goes here.</p></section>';
+    h += '<p class="muted">Watch the video, tell us who you are and what you need, then answer the questions that apply to you.</p>';
+    h += '<div class="vsl" role="img" aria-label="Placeholder for the explainer video"><div class="play"></div><span class="tag">VSL placeholder · 5 to 10 minutes</span></div>';
+    h += '<p class="small muted">The video explains the process and who each plan suits. Your own recording goes here.</p></section>';
+    h += why("launch", "the video", "It explains the process, the plans and who each one suits before the applicant fills in anything.", "Applicants submit without understanding the plans, and advisors repeat the same basics on every call.");
     h += '<section class="card"><div class="row" style="justify-content:space-between"><h2>Step 1 of 2 · Quick check</h2>' + chip("launch") + "</div>";
-    h += '<p class="small muted">Three questions. Then you see only the questions that apply to you.</p>';
+    h += '<p class="small muted">Your details and three quick questions. Your answers are saved as soon as you continue.</p>';
+    if (state.errors.length) h += '<p class="err" role="alert">' + esc(state.errors.join(" ")) + "</p>";
+    h += '<div class="fields">' + field("s1.name", "s1name", "Name (first name and surname)", "text", 'autocomplete="name"') + field("s1.email", "s1email", "Email", "email", 'autocomplete="email"') + field("s1.phone", "s1phone", "Phone number (we call only if we need clarification)", "tel", 'autocomplete="tel"') + "</div>";
     h += '<fieldset class="q"><legend class="req">What do you need help with?</legend><div class="opts">';
     NEEDS.forEach(function (n) { h += radio("need", "s1.need", n.v, n.t, n.s, s.need === n.v); });
     h += '</div></fieldset><fieldset class="q"><legend class="req">Age range</legend><div class="opts two">';
     AGES.forEach(function (a) { h += radio("age", "s1.age", a.v, a.t, "", s.age === a.v); });
     h += '</div></fieldset><fieldset class="q"><legend class="req">Have you been denied a visa by a Schengen country before? (visit, study or work)</legend><div class="opts two">';
     h += radio("denied", "s1.denied", "no", "No", "", s.denied === "no") + radio("denied", "s1.denied", "yes", "Yes", "We will point you to the re-application route", s.denied === "yes");
-    h += '</div></fieldset><div class="row"><button class="btn" type="button" data-action="step1" id="s1btn"' + (s.need && s.age && s.denied ? "" : " disabled") + '>Continue</button><span class="small muted">Takes under a minute</span></div></section>';
+    h += '</div></fieldset><label class="opt" style="margin-bottom:20px"><input type="checkbox" data-field="s1.consent"' + (s.consent ? " checked" : "") + '><span>I agree that my details are saved so an advisor can follow up if I do not finish. <span class="s">Privacy notice link goes here. Your team approves the wording.</span></span></label>';
+    h += '<div class="row"><button class="btn" type="button" data-action="step1">Continue</button><span class="small muted">Takes about a minute</span></div></section>';
+    h += why("launch", "Step 1", "It saves the applicant's contact details and asks the three questions that decide their route. The details are stored the moment they continue.", "A Google form records nothing until the last Submit, so anyone who leaves part-way is lost. Unqualified leads, such as under 18, are also caught here, with their details kept.");
     return h;
-  }
-  function field(id, labelText, type, extra) {
-    var v = state.f[id] || "";
-    return '<div class="q"><label class="t req" for="' + id + '">' + labelText + '</label><input id="' + id + '" type="' + type + '" data-field="f.' + id + '" value="' + esc(v) + '" ' + (extra || "") + "></div>";
   }
   function step2() {
     var r = state.route, s = state.s1, f = state.f, h = "";
-    var summary = '<div class="sum"><span><b>Route:</b> ' + ROUTE_NAME[r] + "</span><span><b>Need:</b> " + esc(label(NEEDS, s.need)) + "</span><span><b>Age:</b> " + esc(label(AGES, s.age)) + "</span><span><b>Visa denial:</b> " + (s.denied === "yes" ? "Yes" : "No") + '</span><a href="#" data-action="back">Change</a></div>';
+    var summary = '<div class="sum"><span><b>Saved:</b> ' + esc(s.name) + ", " + esc(s.email) + ", " + esc(s.phone) + "</span><span><b>Route:</b> " + ROUTE_NAME[r] + "</span><span><b>Need:</b> " + esc(label(NEEDS, s.need)) + "</span><span><b>Age:</b> " + esc(label(AGES, s.age)) + "</span><span><b>Visa denial:</b> " + (s.denied === "yes" ? "Yes" : "No") + '</span><a href="#" data-action="back">Change</a></div>';
     h += '<section class="card"><div class="row" style="justify-content:space-between"><h2>Step 2 of 2 · Your details</h2>' + chip("launch") + "</div>" + summary;
     if (s.denied === "yes") h += '<p class="note">Because you were refused a visa before, the re-application options are shown below.</p><br>';
     if (state.errors.length) h += '<p class="err" role="alert">' + esc(state.errors.join(" ")) + "</p>";
-    h += '<div class="fields">' + field("email", "Email", "email", 'autocomplete="email"') + field("name", "Name (first name and surname)", "text", 'autocomplete="name"') +
-      field("country", "Where are you contacting us from? (country)", "text", 'placeholder="e.g. Mozambique"') + field("phone", "Phone number (we call only if we need clarification)", "tel", 'autocomplete="tel"') + "</div>";
+    h += '<div class="fields">' + field("f.country", "country", "Where are you contacting us from? (country)", "text", 'placeholder="e.g. Mozambique"') + "</div>";
     h += '<div class="q"><label class="t req" for="heard">How did you hear about us?</label><select id="heard" data-field="f.heard"><option value="">Choose one</option>';
     HEARD.forEach(function (x) { h += '<option' + (f.heard === x ? " selected" : "") + ">" + esc(x) + "</option>"; });
     h += "</select></div>";
     h += '<fieldset class="q"><legend class="req">Which intake?</legend><div class="opts two">';
     INTAKES.forEach(function (i) { h += radio("intake", "f.intake", i.v, i.v, i.s, f.intake === i.v, i.off); });
-    h += '</div></fieldset><fieldset class="q"><legend class="req">' + (r === "B" ? "Choose your plan" : r === "A" ? "Your service" : "Your service") + "</legend>";
+    h += '</div></fieldset><fieldset class="q"><legend class="req">' + (r === "B" ? "Choose your plan" : "Your service") + "</legend>";
     if (r === "B") h += '<p class="small muted">Bronze is for private schools (Management and IT programmes only). Silver is for public schools (Sciences, Management, IT and more).</p>';
     h += '<div class="opts">';
     var list = plansFor(r, s);
-    if (list.length === 1 && !f.plan) f.plan = list[0];
-    if (r === "A" && !f.plan) f.plan = list[0];
+    if ((list.length === 1 || r === "A") && !f.plan) f.plan = list[0];
     list.forEach(function (k) { h += radio("plan", "f.plan", k, PLANS[k].n, PLANS[k].p, f.plan === k); });
     h += '</div></fieldset><fieldset class="q"><legend class="req">Are you willing to proceed and be contacted by a Student Advisor?</legend><div class="opts two">' +
       radio("consent", "f.consent", "yes", "Yes", "", f.consent === "yes") + radio("consent", "f.consent", "no", "No", "", f.consent === "no") + "</div></fieldset>";
-    h += '<div class="row"><button class="btn" type="button" data-action="submit">Submit</button><button class="btn alt" type="button" data-action="back">Back</button></div></section>';
+    h += '<div class="row"><button class="btn" type="button" data-action="submit">Submit</button><button class="btn alt" type="button" data-action="back">Back</button><a href="#" class="small" data-action="leave">Demo: leave without finishing</a></div></section>';
+    h += why("launch", "the routing and Step 2", "Each lead goes to the questions that fit their path. Step 2 keeps every question you ask today, because each one has a reason, and shows only the plans that apply.", "One long form with 15 plans for everyone, wrong plan picks, and being told to go back to the website and start again. The intake list is kept in one place, so closed intakes cannot be picked.");
     return h;
   }
-  function onboardingPreview() {
+  function leftView() {
+    return '<section class="card"><h2>The applicant closed the page</h2><p>In the old form, this applicant would be lost, because nothing is recorded until the last Submit.</p><p><b>Here, Step 1 already saved them.</b> Look at the lead record on the right: the advisor can see who they are, what they need and that they stopped at Step 2, and can follow up.</p><div class="row"><button class="btn" type="button" data-action="resume">Return to Step 2</button><button class="btn alt" type="button" data-action="reset">Start over</button></div></section>' +
+      why("launch", "saving at Step 1", "Contact details are stored before the longer questions start.", "Leads that disappear half-way through a long form.");
+  }
+  function onboardPreviewCard() {
     if (state.tier !== "full") return "";
-    return '<section class="card"><div class="row" style="justify-content:space-between"><h3>After your call: onboarding</h3>' + chip("full") + '</div><p class="small muted" style="margin:0 0 8px">Sent once you decide to proceed.</p><ul class="small" style="margin:0;padding-left:20px"><li>Passport data page and signature upload, with file type and size guidance</li><li>Only the agreement for your chosen plan</li><li>Proof of payment, with a short note on how your files are stored and used</li></ul></section>';
+    return '<section class="card fullcard"><div class="row" style="justify-content:space-between"><h3 style="margin:0">After the call: onboarding</h3>' + chip("full") + '</div><p class="small muted" style="margin:8px 0 12px">Sent once the applicant decides to proceed. One guided page for passport, signature, the agreement for their plan and proof of payment.</p><button class="btn fullbtn" type="button" data-action="onboard">Preview the onboarding page</button></section>' +
+      why("full", "the onboarding page", "It collects the documents and the plan agreement in one guided place, after the decision, with clear file guidance and a note on how files are stored.", "Sensitive uploads and agreements spread across a general sign-up page, with no file guidance that I could see on the page.");
+  }
+  function onboardView() {
+    var f = state.f, plan = PLANS[f.plan] || {}, paid = state.route === "A" && state.endStep !== "pay";
+    var h = '<section class="card fullcard"><div class="row" style="justify-content:space-between"><h2>Onboarding</h2>' + chip("full") + '</div><div class="sum"><span><b>Applicant:</b> ' + esc(state.s1.name) + "</span><span><b>Plan:</b> " + esc(plan.n) + "</span></div>";
+    if (state.ob.done) return h + '<div class="okbox"><b>Received (sample).</b> Your advisor will review your documents and confirm by email.</div></section>';
+    h += '<div class="q"><label class="t">Passport data page</label><div class="file">Choose a file · PDF or JPG, up to 5 MB <span class="muted">(sample, nothing is uploaded)</span></div></div>';
+    h += '<div class="q"><label class="t">Signature, matching your passport</label><div class="file">Sign on a blank sheet, photograph it and upload · JPG or PNG</div></div>';
+    h += '<div class="q"><label class="t">Agreement for your plan</label><div class="file" style="background:var(--surface2)">Only the agreement for <b>' + esc(plan.n) + '</b> appears here. Your approved wording goes in this space.</div><label class="opt" style="margin-top:8px"><input type="checkbox" data-field="ob.agree"' + (state.ob.agree ? " checked" : "") + "><span>I have read and agree</span></label></div>";
+    h += paid ? '<p class="small muted">Payment already received through Paystack, so no proof of payment is needed.</p>' : '<div class="q"><label class="t">Proof of payment</label><div class="file">Choose a file · PDF or JPG</div></div>';
+    h += '<p class="small muted">Files are stored in your organisation\'s own account and only the advisors on this case can open them. Sample wording.</p>';
+    h += '<button class="btn fullbtn" type="button" data-action="obsubmit">Submit documents</button></section>';
+    return h + '<div class="row"><button class="btn alt" type="button" data-action="obback">Back</button></div>';
   }
   function thanks(msg) {
-    return '<section class="card"><div class="okbox"><h2>Thank you, ' + esc(state.f.name) + "</h2><p style=\"margin:0\">" + msg + "</p></div></section>";
+    return '<section class="card"><div class="okbox"><h2>Thank you, ' + esc(state.s1.name) + "</h2><p style=\"margin:0\">" + msg + "</p></div></section>";
   }
   function endView() {
     var r = state.route, t = state.tier, f = state.f, plan = PLANS[f.plan] || {};
-    if (r === "D") return '<section class="card"><h2>Thanks for your interest</h2><p>Our current packages are for applicants aged 18 and above. Please come back when you are eligible, or follow us for updates.</p><button class="btn alt" type="button" data-action="reset">Start over</button></section>';
-    if (f.consent === "no") return thanks("You chose not to be contacted, so no advisor will reach out. Your answers were not shared. Come back any time.") + '<button class="btn alt" type="button" data-action="reset">Start over</button>';
+    if (state.endStep === "onboard") return onboardView();
+    if (r === "D") return '<section class="card"><h2>Thanks for your interest, ' + esc(state.s1.name) + '</h2><p>Our current packages are for applicants aged 18 and above. We have kept your details and will tell you when something suitable opens.</p><button class="btn alt" type="button" data-action="reset">Start over</button></section>' +
+      why("launch", "the kind reply", "An applicant who does not qualify gets a polite answer and their details stay saved.", "Unqualified leads reaching advisors, and good future leads being turned away with nothing recorded.");
+    if (f.consent === "no") return thanks("You chose not to be contacted, so no advisor will reach out. Come back any time.");
     if (r === "C") {
-      var msg = "Hello, I'm " + f.name + " from " + f.country + ". I'm interested in: " + plan.n + ".\nIntake: " + f.intake + ". Age range: " + label(AGES, state.s1.age) + ".";
-      return '<section class="card"><div class="row" style="justify-content:space-between"><h2>Chat with an advisor on WhatsApp</h2>' + chip("launch") + '</div><p class="muted">Your message is ready. One tap and it opens in WhatsApp.</p><div class="wa"><div class="bubble">' + esc(msg) + '</div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" data-action="wa">' + (state.wa ? "Opened (sample)" : "Open WhatsApp") + '</button><span class="small muted">Sample only: the live version opens the advisor\'s number.</span></div></section>' + onboardingPreview();
+      var msg = "Hello, I'm " + state.s1.name + " from " + f.country + ". I'm interested in: " + plan.n + ".\nIntake: " + f.intake + ". Age range: " + label(AGES, state.s1.age) + ".";
+      return '<section class="card"><div class="row" style="justify-content:space-between"><h2>Chat with an advisor on WhatsApp</h2>' + chip("launch") + '</div><p class="muted">Your message is ready. One tap and it opens in WhatsApp.</p><div class="wa"><div class="bubble">' + esc(msg) + '</div></div><div class="row" style="margin-top:12px"><button class="btn" type="button" data-action="wa">' + (state.wa ? "Opened (sample)" : "Open WhatsApp") + '</button><span class="small muted">Sample only: the live version opens the advisor\'s number.</span></div></section>' +
+        why("launch", "the WhatsApp ending", "The applicant lands in a chat with their details already written in.", "Submitting and then hearing nothing, and advisors asking for the basics again.") + onboardPreviewCard();
     }
-    if (t === "launch") return thanks("An advisor received your details and will contact you by email or phone. In the Convert tier this is where you pick a time or pay online.") + '<div class="note">You are viewing the Launch tier: the advisor is alerted and follows up by hand.</div>';
+    if (t === "launch") return thanks("An advisor received your details and will contact you by email or phone. In Convert, this is where you pick a time or pay online.") +
+      why("launch", "the advisor follow-up", "Without booking or payment, the advisor is alerted and follows up by hand.", "Leads sitting unseen in a form. Convert adds the booking and payment steps.");
     if (!state.endStep) state.endStep = r === "A" ? "pay" : "slot";
     if (state.endStep === "pay") {
-      return '<section class="card"><div class="row" style="justify-content:space-between"><h2>Pay to confirm your session</h2>' + chip("convert") + '</div><div class="pay"><p style="margin:0 0 4px"><b>' + esc(plan.n) + '</b></p><p class="muted" style="margin:0 0 12px">' + esc(plan.p) + '</p><p class="small muted" style="margin:0 0 12px">The Paystack checkout opens here in the live version. This is a stand-in, nothing is charged.</p><button class="btn" type="button" data-action="pay">Simulate payment</button></div></section>';
+      return '<section class="card"><div class="row" style="justify-content:space-between"><h2>Pay to confirm your session</h2>' + chip("convert") + '</div><div class="pay"><p style="margin:0 0 4px"><b>' + esc(plan.n) + '</b></p><p class="muted" style="margin:0 0 12px">' + esc(plan.p) + '</p><p class="small muted" style="margin:0 0 12px">The Paystack checkout opens here in the live version. This is a stand-in, nothing is charged.</p><button class="btn" type="button" data-action="pay">Simulate payment</button></div></section>' +
+        why("convert", "payment inside the flow", "Paid services are paid for in the same flow, right before the session is booked.", "A separate payment page and form, then the applicant uploading proof of payment for someone to check by hand.");
     }
     if (state.endStep === "slot") {
       var h = '<section class="card"><div class="row" style="justify-content:space-between"><h2>' + (r === "A" ? "Payment received. Choose a time" : "Book your call") + "</h2>" + chip("convert") + "</div>";
       h += '<p class="muted">' + (r === "A" ? "Pick a slot for your session." : "Pick a slot with a Student Advisor. Fees are discussed on the call.") + "</p>";
       h += '<div class="row"><span class="lbl">Meeting on</span><span class="seg"><button type="button" data-action="meet" data-v="Zoom" aria-pressed="' + (state.meet === "Zoom") + '">Zoom</button><button type="button" data-action="meet" data-v="Google Meet" aria-pressed="' + (state.meet === "Google Meet") + '">Google Meet</button></span></div><div class="slots">';
-      SLOTS.forEach(function (x) { h += '<label class="opt">' + '<input type="radio" name="slot" data-field="slot" value="' + x + '"' + (state.slot === x ? " checked" : "") + "><span>" + x + "</span></label>"; });
+      SLOTS.forEach(function (x) { h += '<label class="opt"><input type="radio" name="slot" data-field="slot" value="' + x + '"' + (state.slot === x ? " checked" : "") + "><span>" + x + "</span></label>"; });
       h += '</div><p class="small muted">Sample availability. The live version reads your real calendar.</p><button class="btn" type="button" data-action="book">Confirm booking</button></section>';
-      return h;
+      return h + why("convert", "booking", "The applicant picks a time while they are still interested.", "Slow manual follow-up, and the gap between filling in a form and speaking to an advisor.");
     }
-    return '<section class="card"><div class="okbox"><h2>You are booked</h2><p style="margin:0">' + esc(state.slot) + " on " + esc(state.meet) + ". A calendar invite and reminders go to " + esc(f.email) + ".</p></div></section>" +
-      '<section class="card"><h3>What happens next</h3><p class="small muted" style="margin:0">Reminders go out before the call. If you do not show up, you get a link to rebook.</p></section>' + onboardingPreview();
+    return '<section class="card"><div class="okbox"><h2>You are booked</h2><p style="margin:0">' + esc(state.slot) + " on " + esc(state.meet) + ". A calendar invite and reminders go to " + esc(state.s1.email) + ".</p></div></section>" +
+      why("convert", "follow-up for booked calls", "Reminders go out before the call, and a no-show gets a link to rebook.", "No-shows and lost momentum after a booking.") + onboardPreviewCard();
+  }
+  function planPage() {
+    var pp = PLANPAGES[state.planpage], p = PLANS[pp.plan];
+    var h = '<section class="card fullcard"><div class="row" style="justify-content:space-between"><div class="eyebrow">Rebuilt plan page · sample wording</div>' + chip("full") + "</div>";
+    h += '<div class="row" style="margin:10px 0"><span class="seg"><button type="button" data-action="pp" data-v="bronze" aria-pressed="' + (state.planpage === "bronze") + '">Bronze</button><button type="button" data-action="pp" data-v="silver" aria-pressed="' + (state.planpage === "silver") + '">Silver</button></span></div>';
+    h += "<h1>" + esc(pp.name) + "</h1><p class=\"lead\">" + esc(pp.who) + "</p>";
+    h += '<div class="plans"><div class="box"><h3>What is included</h3><ul style="margin:0;padding-left:20px">' + pp.incl.map(function (i) { return "<li>" + esc(i) + "</li>"; }).join("") + '</ul></div>';
+    h += '<div class="box"><h3>Fee</h3><p style="margin:0 0 8px"><b>' + esc(p.p) + "</b> for " + esc(p.n.split(":")[0]) + '.</p><h3>Age guidance</h3><p class="muted" style="margin:0 0 8px">' + esc(pp.ages) + '</p><h3>Open intakes</h3><p class="muted" style="margin:0">September/October intake: application is open</p></div></div>';
+    h += '<div class="row" style="margin-top:16px"><button class="btn fullbtn" type="button" data-action="startflow">Start: watch the video and check your route</button><span class="small muted">One button, one next step.</span></div></section>';
+    h += why("full", "the rebuilt plan pages", "Each plan page states who it is for, what it includes, the fee and the open intakes, then points to one next step.", "Plan pages that end in a form button with no fee, and small inconsistencies, such as two different blog links in the header and footer, that make applicants doubt the details.");
+    return h;
   }
   function today() {
     var h = '<section class="card"><div class="eyebrow">Current form structure</div><h1>Today: one long form for everyone</h1><p class="muted">Rebuilt from the live Bronze form text so the two can be compared side by side. Nothing here is interactive.</p>';
@@ -283,22 +363,24 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
     h += "</tbody></table></div></section>";
     h += '<section class="card"><h2>What this means for an applicant</h2><ul class="callouts">' +
       "<li>Everyone sees all 15 plans, including ones that cannot apply to them.</li>" +
+      "<li>A Google form records nothing until the last Submit, so an applicant who leaves part-way is lost.</li>" +
       "<li>The form says applicants under 18 are not included, but they can still submit it.</li>" +
       "<li>Public school applicants are told to leave the form and go back to the website to pick Silver.</li>" +
       "<li>Intake status such as “CLOSED” is typed into the answer text, so it goes stale when dates change.</li>" +
       "<li>The form text shows no booking, no payment and no WhatsApp step.</li></ul></section>";
-    h += '<section class="card"><h2>The same questions, in a different order</h2><p style="margin:0">Every question above is still asked in the proposed flow. Age and visa denial move to Step 1 because they decide the route. The rest stay in Step 2, with plan choices cut down to the ones that apply.</p></section>';
+    h += '<section class="card"><h2>The same questions, in a different order</h2><p style="margin:0">Every question above is still asked in the proposed flow. Name, email, phone, age and visa denial come first, in Step 1, because they save the lead and decide the route. The rest stay in Step 2, with plan choices cut down to the ones that apply.</p></section>';
     return h;
   }
   function side() {
-    var h = '<section class="card"><h3>Behind the scenes</h3><p class="small muted" style="margin:0 0 10px">What the advisor and the responses sheet receive.</p>';
-    if (!state.lead) h += '<p class="small muted" style="margin:0">Nothing yet. Complete the form to see the lead record.</p>';
+    var h = '<section class="card"><h3>Behind the scenes</h3><p class="small muted" style="margin:0 0 10px">The lead record in the responses sheet, which your team owns.</p>';
+    if (!state.lead) h += '<p class="small muted" style="margin:0">Nothing yet. Press Continue on Step 1 and the record appears.</p>';
     else {
       var l = state.lead;
-      h += '<dl class="kv"><dt>Status</dt><dd>' + esc(l.status) + "</dd><dt>Route</dt><dd>" + esc(l.route) + "</dd><dt>Name</dt><dd>" + esc(l.name) + "</dd><dt>Email</dt><dd>" + esc(l.email) + "</dd><dt>Phone</dt><dd>" + esc(l.phone) + "</dd><dt>Country</dt><dd>" + esc(l.country) + "</dd><dt>Plan</dt><dd>" + esc(l.plan) + "</dd><dt>Intake</dt><dd>" + esc(l.intake) + "</dd><dt>Age</dt><dd>" + esc(l.age) + "</dd><dt>Visa denial</dt><dd>" + esc(l.denied) + "</dd><dt>Heard via</dt><dd>" + esc(l.heard) + "</dd><dt>Link source</dt><dd>instagram (sample)</dd><dt>Advisor alert</dt><dd>sent (sample)</dd></dl>";
+      h += '<dl class="kv"><dt>Status</dt><dd><b>' + esc(l.status) + "</b></dd><dt>Route</dt><dd>" + esc(l.route) + "</dd><dt>Name</dt><dd>" + esc(l.name) + "</dd><dt>Email</dt><dd>" + esc(l.email) + "</dd><dt>Phone</dt><dd>" + esc(l.phone) + "</dd><dt>Need</dt><dd>" + esc(l.need) + "</dd><dt>Age</dt><dd>" + esc(l.age) + "</dd><dt>Visa denial</dt><dd>" + esc(l.denied) + "</dd><dt>Country</dt><dd>" + esc(l.country || "-") + "</dd><dt>Heard via</dt><dd>" + esc(l.heard || "-") + "</dd><dt>Intake</dt><dd>" + esc(l.intake || "-") + "</dd><dt>Plan</dt><dd>" + esc(l.plan || "-") + "</dd><dt>Link source</dt><dd>instagram (sample)</dd><dt>Advisor alert</dt><dd>" + esc(l.alert) + "</dd></dl>";
     }
     h += "</section>";
-    h += '<section class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Tracking events</h3>' + chip("launch") + "</div>";
+    if (state.why) h += '<aside class="why"><div class="h">' + chip("launch") + "<span>Why the record and alert exist</span></div><p>Every lead is in one sheet your team owns, filterable by route, and the advisor is alerted when a lead finishes Step 2.</p><p><b>Problem it removes:</b> leads scattered across forms and inboxes, and no record of those who did not finish.</p></aside>";
+    h += '<section class="card"><div class="row" style="justify-content:space-between"><h3 style="margin:0">Tracking events</h3>' + chip(state.tier === "full" ? "full" : "launch") + "</div>";
     if (!state.events.length) h += '<p class="small muted" style="margin:10px 0 0">Events appear here as you move through the flow.</p>';
     else {
       h += '<ul class="log" style="margin-top:10px">';
@@ -306,29 +388,42 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
       h += "</ul>";
     }
     h += "</section>";
+    if (state.why) h += '<aside class="why ' + (state.tier === "full" ? "full" : "") + '"><div class="h">' + chip(state.tier === "full" ? "full" : "launch") + "<span>Why tracking exists</span></div><p>" + (state.tier === "full" ? "On every page, with Meta Pixel and Conversion API behind a consent banner." : "Funnel events show where applicants drop off and which source brings them.") + "</p><p><b>Problem it removes:</b> no data today on which pages, sources or plans produce applications.</p></aside>";
     return h;
+  }
+  function tierInfo() {
+    var t = TIER_INFO[state.tier];
+    return '<div class="tierinfo ' + t[1] + '"><b>' + chip(t[1]) + "&nbsp; " + t[0] + (state.tier === "full" ? " · the most complete package" : "") + "</b><br>" + t[2] + "</div>";
+  }
+  function cookie() {
+    if (state.tier !== "full" || state.cc || state.tab === "today") return "";
+    return '<div class="cookie" role="dialog" aria-label="Cookie consent">' + chip("full") + '<p>We use analytics cookies to see which pages help applicants. You choose whether tracking runs. Sample banner.</p><button class="btn fullbtn" type="button" data-action="cc" data-v="yes">Accept</button><button class="btn alt" type="button" data-action="cc" data-v="no">Decline</button></div>';
   }
 
   /* ---------- actions ---------- */
-  function setByPath(path, v) {
-    var p = path.split("."), o = state;
-    for (var i = 0; i < p.length - 1; i++) o = o[p[i]];
-    o[p[p.length - 1]] = v;
+  function leadFromState(status, alert) {
+    var s = state.s1, f = state.f, plan = f.plan ? PLANS[f.plan].n : "";
+    return { status: status, route: ROUTE_NAME[state.route], name: s.name, email: s.email, phone: s.phone, need: label(NEEDS, s.need), age: label(AGES, s.age), denied: s.denied === "yes" ? "Yes" : "No", country: f.country, heard: f.heard, intake: f.intake, plan: plan, alert: alert };
   }
-  function updateS1Button() {
-    var b = document.getElementById("s1btn");
-    if (b) b.disabled = !(state.s1.need && state.s1.age && state.s1.denied);
+  function pixel(name) {
+    if (state.tier !== "full") return;
+    if (state.cc === "yes") { track("meta_pixel " + name, "", "f"); track("conversion_api " + name, "server-side", "f"); }
+    else track("meta_pixel " + name + " skipped", "no consent yet", "x");
   }
-  function startFlow() {
-    track("page_view", "/apply");
-    track("video_section_view", "", "l");
+  function validate1() {
+    var s = state.s1, e = [];
+    if ((s.name || "").trim().length < 2) e.push("Enter your name.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email || "")) e.push("Enter a valid email.");
+    if (!(s.phone || "").trim()) e.push("Enter a phone number.");
+    if (!s.need) e.push("Choose what you need help with.");
+    if (!s.age) e.push("Choose an age range.");
+    if (!s.denied) e.push("Answer the visa question.");
+    if (!s.consent) e.push("Tick the box so we can save your details.");
+    return e;
   }
-  function validate() {
+  function validate2() {
     var f = state.f, e = [];
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(f.email || "")) e.push("Enter a valid email.");
-    if (!(f.name || "").trim()) e.push("Enter your name.");
     if (!(f.country || "").trim()) e.push("Enter your country.");
-    if (!(f.phone || "").trim()) e.push("Enter a phone number.");
     if (!f.heard) e.push("Tell us how you heard about us.");
     if (!f.intake) e.push("Choose an intake.");
     if (!f.plan) e.push("Choose a service.");
@@ -337,38 +432,57 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
   }
   function act(a, v) {
     if (a === "tab") { state.tab = v; render(); return; }
-    if (a === "tier") { state.tier = v; render(); return; }
-    if (a === "reset") { var t = state.tab, ti = state.tier; state = fresh(t, ti); clock = 0; startFlow(); render(); return; }
+    if (a === "tier") { state.tier = v; if (v !== "full" && state.tab === "plan") state.tab = "proposed"; render(); return; }
+    if (a === "why") { state.why = !state.why; render(); return; }
+    if (a === "cc") { state.cc = v; track("consent " + (v === "yes" ? "accepted" : "declined"), "", v === "yes" ? "f" : "x"); render(); return; }
+    if (a === "pp") { state.planpage = v; render(); return; }
+    if (a === "startflow") { state.tab = "proposed"; render(); window.scrollTo(0, 0); return; }
+    if (a === "reset") { var t = state.tab, ti = state.tier, w = state.why, cc = state.cc; state = fresh(t, ti, w, cc); clock = 0; startFlow(); render(); window.scrollTo(0, 0); return; }
     if (a === "back") { state.screen = "landing"; state.errors = []; render(); return; }
     if (a === "step1") {
+      state.errors = validate1();
+      if (state.errors.length) { render(); window.scrollTo(0, 0); return; }
       var s = state.s1;
-      if (!(s.need && s.age && s.denied)) return;
       state.route = routeOf(s);
       track("step1_complete", "route=" + state.route + " need=" + s.need);
+      track("generate_lead", "route=" + state.route);
       if (state.route === "D") {
-        state.lead = { status: "Not a fit (under 18)", route: ROUTE_NAME.D, name: "-", email: "-", phone: "-", country: "-", plan: "-", intake: "-", age: label(AGES, s.age), denied: s.denied, heard: "-" };
+        state.lead = leadFromState("Saved: not a fit (under 18)", "not sent, kept for later");
+        track("lead_saved", "sheet row created");
         track("lead_not_fit", "reason=under_18");
+        pixel("Lead");
         state.screen = "end";
-      } else { state.screen = "step2"; track("step2_view", "route=" + state.route); }
-      render(); window.scrollTo(0, 0); return;
+      } else {
+        state.lead = leadFromState("Saved at Step 1, not finished", "waiting for Step 2");
+        track("lead_saved", "sheet row created");
+        track("step2_view", "route=" + state.route);
+        state.screen = "step2";
+      }
+      state.errors = []; render(); window.scrollTo(0, 0); return;
     }
+    if (a === "leave") {
+      state.lead = leadFromState("Partial: left at Step 2", "partial lead flagged");
+      track("step2_abandon", "details already saved");
+      state.screen = "left"; render(); window.scrollTo(0, 0); return;
+    }
+    if (a === "resume") { state.lead = leadFromState("Saved at Step 1, not finished", "waiting for Step 2"); state.screen = "step2"; render(); return; }
     if (a === "submit") {
-      state.errors = validate();
+      state.errors = validate2();
       if (state.errors.length) { render(); window.scrollTo(0, 0); return; }
       var f = state.f;
-      state.lead = { status: f.consent === "yes" ? "Qualified, wants contact" : "Qualified, no contact", route: ROUTE_NAME[state.route], name: f.name, email: f.email, phone: f.phone, country: f.country, plan: PLANS[f.plan].n, intake: f.intake, age: label(AGES, state.s1.age), denied: state.s1.denied === "yes" ? "Yes" : "No", heard: f.heard };
+      state.lead = leadFromState(f.consent === "yes" ? "Qualified, wants contact" : "Qualified, no contact", f.consent === "yes" ? "sent to advisor (sample)" : "not sent");
       track("step2_submit", "route=" + state.route + " plan=" + f.plan);
-      track("generate_lead", "value_plan=" + f.plan);
-      if (state.tier === "full") { track("meta_pixel Lead", "", "f"); track("conversion_api Lead", "server-side", "f"); }
+      track("qualify_lead", "plan=" + f.plan);
+      pixel("QualifiedLead");
       state.screen = "end"; render(); window.scrollTo(0, 0); return;
     }
-    if (a === "pay") { state.paid = true; state.endStep = "slot"; track("purchase", "paystack " + state.f.plan, "c"); if (state.tier === "full") track("meta_pixel Purchase", "", "f"); render(); return; }
+    if (a === "pay") { state.endStep = "slot"; track("purchase", "paystack " + state.f.plan, "c"); pixel("Purchase"); render(); return; }
     if (a === "meet") { state.meet = v; render(); return; }
-    if (a === "book") {
-      if (!state.slot) return;
-      state.endStep = "done"; track("booking_confirmed", state.meet + " " + state.slot, "c"); render(); return;
-    }
+    if (a === "book") { if (!state.slot) return; state.endStep = "done"; track("booking_confirmed", state.meet + " " + state.slot, "c"); render(); return; }
     if (a === "wa") { state.wa = true; track("whatsapp_click", "route=C"); render(); return; }
+    if (a === "onboard") { state.prevEnd = state.endStep; state.endStep = "onboard"; track("onboarding_view", "", "f"); render(); window.scrollTo(0, 0); return; }
+    if (a === "obback") { state.endStep = state.prevEnd || "done"; render(); return; }
+    if (a === "obsubmit") { if (!state.ob.agree) return; state.ob.done = true; track("onboarding_complete", "", "f"); render(); return; }
   }
 
   document.addEventListener("click", function (e) {
@@ -381,27 +495,38 @@ th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--lin
     var fld = e.target.getAttribute && e.target.getAttribute("data-field");
     if (!fld) return;
     if (fld === "slot") { state.slot = e.target.value; return; }
-    setByPath(fld, e.target.value);
-    if (fld.indexOf("s1.") === 0) updateS1Button();
+    setBy(fld, e.target.type === "checkbox" ? e.target.checked : e.target.value);
   });
   document.addEventListener("input", function (e) {
     var fld = e.target.getAttribute && e.target.getAttribute("data-field");
-    if (fld && e.target.type !== "radio" && fld !== "slot") setByPath(fld, e.target.value);
+    if (fld && e.target.type !== "radio" && e.target.type !== "checkbox" && fld !== "slot") setBy(fld, e.target.value);
   });
 
+  function startFlow() { track("page_view", "/apply"); track("vsl_view", ""); }
+  function setPressed(sel, attr, val) {
+    var els = document.querySelectorAll(sel);
+    for (var i = 0; i < els.length; i++) els[i].setAttribute("aria-pressed", els[i].getAttribute(attr) === val);
+  }
   function render() {
-    var segs = document.querySelectorAll("[data-action=tab]");
-    for (var i = 0; i < segs.length; i++) segs[i].setAttribute("aria-pressed", segs[i].getAttribute("data-v") === state.tab);
-    var tb = document.querySelectorAll("[data-action=tier]");
-    for (var j = 0; j < tb.length; j++) tb[j].setAttribute("aria-pressed", tb[j].getAttribute("data-v") === state.tier);
-    document.getElementById("tierBar").hidden = state.tab !== "proposed";
+    var full = state.tier === "full";
+    document.getElementById("planTab").hidden = !full;
+    setPressed("[data-action=tab]", "data-v", state.tab);
+    setPressed("[data-action=tier]", "data-v", state.tier);
+    document.getElementById("whyBtn").setAttribute("aria-pressed", state.why);
+    document.getElementById("whyBtn").textContent = "Why each step: " + (state.why ? "on" : "off");
+    document.getElementById("tierBar").hidden = state.tab === "today";
+    document.getElementById("tierInfo").innerHTML = state.tab === "today" ? "" : tierInfo();
     var main = document.getElementById("main");
     if (state.tab === "today") main.innerHTML = today();
+    else if (state.tab === "plan" && full) main.innerHTML = planPage();
     else if (state.screen === "landing") main.innerHTML = landing();
     else if (state.screen === "step2") main.innerHTML = step2();
+    else if (state.screen === "left") main.innerHTML = leftView();
     else main.innerHTML = endView() + '<div class="row"><button class="btn alt" type="button" data-action="reset">Start over</button></div>';
-    document.getElementById("side").innerHTML = state.tab === "today" ? "" : side();
-    document.getElementById("side").hidden = state.tab === "today";
+    var sd = document.getElementById("side");
+    sd.innerHTML = (state.tab === "today" || state.tab === "plan") ? "" : side();
+    sd.hidden = state.tab === "today" || state.tab === "plan";
+    document.getElementById("cookie").innerHTML = cookie();
   }
   startFlow();
   render();
